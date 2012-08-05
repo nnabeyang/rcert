@@ -42,3 +42,15 @@ SRC
   option :method_name => "shift" 
 end
 
+method_problem :problem_4 do
+  description <<-DESC
+以下のコードを実行したとき表示されるものを1つ選択してください
+  DESC
+  src <<-SRC
+[0, 1, 2, 3].<%= @method_name %> {|x, y| p [x, y]}
+  SRC
+  option :method_name => "map"
+  option :method_name => "each"
+  option :method_name => "each_with_index"
+end
+
