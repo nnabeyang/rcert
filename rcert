@@ -2,6 +2,7 @@
 # -*- encoding: utf-8 -*-
 require './rcert'
 Rcert.application.run do|p|
+  p.prepare
   print p.render
   while line = STDIN.gets
     case line

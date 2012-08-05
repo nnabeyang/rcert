@@ -84,9 +84,11 @@ module Rcert
     def set_answer
       @answer = @options[0]
     end
-    def render
+    def prepare
       @options = @options.sort_by {rand}
       set_answer
+    end
+    def render
       template = [ 
       "<%= @desc %>",
       "<%= @answer %>",
@@ -123,8 +125,6 @@ module Rcert
   end
   class MethodProblem < Problem
     def render
-      @options = @options.sort_by {rand}
-      set_answer
       template = [ 
       "<%= @desc %>",
       "<%= @code_template %>",
