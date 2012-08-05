@@ -113,4 +113,24 @@ class Tests < Test::Unit::TestCase
     assert !prob.select(1)
     Rcert.application.clear
   end
+  def test_problem_with_error_code
+    Rcert.application.clear
+    method_problem :problem_name do
+      description <<-DESC
+        以下のコードを実行したとき表示されるものを1つ選択してください
+      DESC
+      src <<-SRC
+        [0, 1, 4, 9].<%= @method_name %> {|x, y| p [x, y]}
+      SRC
+      option :method_name => "no_such_method"
+      option :method_name => "no_such_method2"
+      option :method_name => "no_such_method3"
+      option :method_name => "each_with_index"
+    end
+    prob = Rcert.application[:problem_name]
+    prob.set_answer
+    assert !prob.select(0)
+    assert prob.select(3)
+    Rcert.application.clear
+  end
 end

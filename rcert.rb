@@ -74,6 +74,7 @@ module Rcert
     def initialize(name, data = nil)
       @name = name
       @options = []
+      @error_options = []
       src(data) if data
     end
     class << self
@@ -82,7 +83,7 @@ module Rcert
       end
     end
     def set_answer
-      @answer = @options[0]
+      @answer = (@options - @error_options)[0]
     end
     def prepare
       @options = @options.sort_by {rand}
@@ -111,9 +112,14 @@ module Rcert
       option = Option.new(value)
       klass = option.singleton_class
       klass.class_eval(@code) 
-      option.eval "_#{@name}"
-      @options << option 
-      option
+      begin
+        option.eval "_#{@name}"
+      rescue
+        @error_options.push(option)
+      ensure
+        @options << option 
+        option
+      end
     end
     def select(idx)
       return (@answer.out == @options[idx].out)? true : false 
