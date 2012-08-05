@@ -22,7 +22,7 @@ class Tests < Test::Unit::TestCase
   def test_application_define_problem
     app = Rcert::Application.new
     str = Rcert::random_string(5)
-    app.define_problem :problem_name do
+    app.define_problem Rcert::Problem, :problem_name do
       src <<-SRC
         puts "#{str}"[<%= @range %>]
       SRC
@@ -87,5 +87,30 @@ class Tests < Test::Unit::TestCase
     Rcert.application.status(out)
     Rcert.application.clear
     assert_match %r"\d+/\d+$", out.string
+  end
+  def test_method_problem
+    Rcert.application.clear
+    str = Rcert::random_string(5)
+    method_problem :problem_name do
+      description <<-DESC
+        以下のコードを実行したとき表示されるものを1つ選択してください
+      DESC
+      src <<-SRC
+        x = ["Ruby", "Perl", "C"]
+        puts x.<%= @method_name %>
+        puts x[0] 
+      SRC
+      option :method_name => "first"
+      option :method_name => "shift"
+    end
+    prob = Rcert.application[:problem_name]
+    prob.set_answer
+    out = prob.render
+    assert_match /Ruby\nRuby\n/, out 
+    assert_match /first/, out 
+    assert_match /shift/, out
+    assert prob.select(0)
+    assert !prob.select(1)
+    Rcert.application.clear
   end
 end

@@ -37,8 +37,8 @@ module Rcert
     def clear
       @problems.clear
     end
-    def define_problem(name, &block)
-      prob = Problem.new(name)
+    def define_problem(problem_class, name, &block)
+      prob = problem_class.new(name)
       @problems[name.to_s] = prob
       prob.instance_eval(&block) 
     end
@@ -48,8 +48,9 @@ module Rcert
   end
   class Option
     include Helper
-    attr_reader :out
+    attr_reader :out, :attrs
     def initialize(attrs)
+      @attrs = attrs
       attrs.each do|k, v|
         instance_variable_set("@#{k}", v)
       end
@@ -75,6 +76,11 @@ module Rcert
       @options = []
       src(data) if data
     end
+    class << self
+      def define_problem(name, &block)
+        Rcert.application.define_problem(self, name, &block)
+      end
+    end
     def set_answer
       @answer = @options[0]
     end
@@ -91,6 +97,7 @@ module Rcert
       ERB.new(template).result(binding)
     end
     def src data
+      @code_template = data
       @code = <<-RUBY
         def _#{@name}
           #{ERB.call(data)}
@@ -114,8 +121,28 @@ module Rcert
     end
     alias option add_option 
   end
+  class MethodProblem < Problem
+    def render
+      @options = @options.sort_by {rand}
+      set_answer
+      template = [ 
+      "<%= @desc %>",
+      "<%= @code_template %>",
+      "---------\n",
+      "<%= @answer.out %>",
+      "---------\n",
+      "<% options.each_with_index do|opt, i| %>",
+      "<%= i %>)<%= opt.attrs %>\n",
+      "<% end %>"
+      ].join
+      ERB.new(template).result(binding)
+    end
+  end
   extend Helper
 end
 def problem(name, &block)
-  Rcert.application.define_problem(name, &block)
+  Rcert::Problem.define_problem(name, &block)
+end
+def method_problem(name, &block)
+  Rcert::MethodProblem.define_problem(name, &block)
 end
