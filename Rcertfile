@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 problem :problem_1 do
   size = 5
-  str = Rcert::random_string(size)
   f = rand(size-1)
   l = f + 1 + rand(size-(f + 1))
   description <<-DESC
@@ -10,9 +9,8 @@ DESC
   src <<-SRC
 puts "<%= random_string(#{size}) %>"[<%= @range %>]
 SRC
-opts = ["#{f}..#{l}", "#{f}...#{l}"].sort_by {rand}
-  option :range => opts[0]
-  option :range => opts[1] 
+  option :range => "#{f}..#{l}"
+  option :range => "#{f}...#{l}" 
 end
 
 method_problem :problem_2 do
@@ -25,9 +23,8 @@ x = #{array}
   puts x.<%= @method_name %>
   puts x[0] 
 SRC
-ms = ["first", "shift"].sort_by {rand}
-  option :method_name => ms[0] 
-  option :method_name => ms[1] 
+  option :method_name => "first" 
+  option :method_name => "shift" 
 end
 
 problem :problem_3 do
@@ -41,8 +38,7 @@ b = a
 c = b.<%= @method_name %>
 puts a.inject {|x, i| x * i} + c
 SRC
-ms = ["first", "shift"].sort_by {rand}
-  option :method_name => ms[0] 
-  option :method_name => ms[1] 
+  option :method_name => "first"
+  option :method_name => "shift" 
 end
 
