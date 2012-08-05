@@ -15,7 +15,7 @@ opts = ["#{f}..#{l}", "#{f}...#{l}"].sort_by {rand}
   option :range => opts[1] 
 end
 
-problem :problem_2 do
+method_problem :problem_2 do
 array = ["Ruby", "Perl", "Python", "PHP"].sort_by {rand}
     description <<-DESC
 以下のコードを実行したとき表示されるものを1つ選択してください
