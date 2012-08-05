@@ -1,0 +1,22 @@
+#!/usr/bin/ruby1.9.1
+# -*- encoding: utf-8 -*-
+require './rcert'
+Rcert.application.run do|p|
+  print p.render
+  while line = STDIN.gets
+    case line
+    when /\A(\d)/
+      break
+    when "s\n", "score\n"
+      Rcert.application.status
+    when "r\n", "render\n"
+      print p.render
+    when "q\n", "quit\n"
+      Rcert.application.status
+      exit
+    end
+  end
+  /\A(\d)/ =~ line 
+  p.select($1.to_i)
+end
+Rcert.application.status
