@@ -6,7 +6,7 @@ Rcert.application.run do|p|
   print p.render
   while line = STDIN.gets
     case line
-    when /\A(\d)/
+    when /\A(\d\s*)+/
       break
     when "s\n", "score\n"
       Rcert.application.status
@@ -17,8 +17,8 @@ Rcert.application.run do|p|
       exit
     end
   end
-  /\A(\d)/ =~ line 
-  p.select($1.to_i)
+  /\A\s*((\d\s*)+)/ =~ line 
+  p.select(*($1.split.map {|e| e.to_i}))
 end
 Rcert.application.report_result
 Rcert.application.status

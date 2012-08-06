@@ -21,15 +21,16 @@ module Rcert
     end
   end
   class FailureProblem
-    def initialize(idx, problem)
-      @idx = idx
+    def initialize(indices, problem)
+      @indices = indices 
       @problem = problem
     end
     def to_s
        template = [ 
       "<%= @problem.name %>:\n",
       "expected:<%= @problem.render_answer %>, ",
-      "actual:<%= @problem.render_option(@idx) %>"
+      "actual:",
+      "<%= @problem.render_option(@indices) %>",
       ].join
       ERB.new(template).result(binding)
     end
@@ -55,11 +56,11 @@ module Rcert
       end
     end
     def run_program(problem, &block)
-     idx, success = block.call(problem)
+     indices, success = block.call(problem)
      if success
        @successes.push(problem)
      else
-       @failures.push(FailureProblem.new(idx, problem))
+       @failures.push(FailureProblem.new(indices, problem))
      end
     end
     def status(out = STDOUT)
@@ -141,7 +142,9 @@ module Rcert
       end
     end
     def set_answer
-      @answer = (@options - @error_options)[0]
+      runnable_options = (@options - @error_options)
+      @answer = runnable_options.shift
+      @answers = runnable_options.select {|opt| opt.out == @answer.out} << @answer
     end
     def prepare
       @options = @options.sort_by {rand}
@@ -157,8 +160,8 @@ module Rcert
       ].join
       ERB.new(template).result(binding)
     end
-    def render_option idx
-      @options[idx].out.inspect
+    def render_option indices
+      @options[indices.first].out.inspect
     end
     def render_answer
       @answer.out.inspect
@@ -185,9 +188,15 @@ module Rcert
         option
       end
     end
-    def select(idx)
-      success = (@answer.out == @options[idx].out)? true : false
-      return [idx, success]
+    def select(*indices)
+      failure_indices = []
+      answers = @answers.dup
+      indices.each do|idx|
+        return [indices, false] unless answers.include? @options[idx]
+        answers.delete(@options[idx])
+      end
+      success = answers.empty?
+      return [indices, success]
     end
     def description text
       @desc = text
@@ -197,11 +206,11 @@ module Rcert
     def option(value)
       super :method_name => value
     end
-    def render_option idx
-      @options[idx].attrs[:method_name]
+    def render_option indices
+      indices.map {|i| @options[i].attrs[:method_name]}
     end
     def render_answer
-      @answer.attrs[:method_name]
+      @answers.map {|ans| ans.attrs[:method_name]}
     end
     def render
       template = [ 
@@ -225,8 +234,8 @@ module Rcert
     def option(value)
       super :src => value.sub(/\A\s*/, '')
     end
-    def render_option idx
-      "\n#{@options[idx].attrs[:src]}"
+    def render_option indices
+      "\n#{@options[indices.first].attrs[:src]}"
     end
     def render_answer
       "\n#{@answer.attrs[:src]}"

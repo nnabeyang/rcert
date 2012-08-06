@@ -275,4 +275,26 @@ foo
     end
     Rcert.application.clear
   end
+  def test_method_problem_select_multiple_answers
+    Rcert.application.clear
+    method_problem :problem_name do
+      description <<-DESC
+        以下のコードを実行したとき表示されるものを選択してください
+      DESC
+      src <<-SRC
+        puts [1, 2, 3, 4].<%= @method_name %> {|x| x*x}.inspect
+      SRC
+      option "collect"
+      option "map"
+      option "each"
+    end
+    prob = Rcert.application[:problem_name]
+    prob.set_answer
+    assert !prob.select(0)[1]
+    assert !prob.select(1)[1]
+    assert !prob.select(2)[1]
+    assert !prob.select(2, 1, 0)[1]
+    assert prob.select(0, 1)[1]
+    Rcert.application.clear
+  end
 end
