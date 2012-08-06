@@ -94,8 +94,13 @@ module Rcert
       s = StringIO.new
       $stdout = s
       @code = send(name)
-      Kernel.eval(@code, nil, name, 1)
-      @out = s.string
+      begin
+        Kernel.eval(@code, nil, name, 1)
+        @out = s.string
+      rescue => e
+        @out = "<error>"
+        raise e
+      end
     ensure
       $stdout = STDOUT
     end

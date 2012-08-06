@@ -144,6 +144,7 @@ class Tests < Test::Unit::TestCase
     prob.set_answer
     assert !prob.select(0)[1]
     assert prob.select(3)[1]
+    assert_equal "<error>", prob.options[0].out
     Rcert.application.clear
-  end
+  end 
 end
