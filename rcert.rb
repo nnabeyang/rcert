@@ -196,6 +196,9 @@ module Rcert
     end
   end
   class ProgramProblem < Problem
+    def option(value)
+      super :src => value
+    end
     def render
       template = [ 
       "<%= @desc %>",

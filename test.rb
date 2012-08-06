@@ -174,8 +174,8 @@ class Tests < Test::Unit::TestCase
         end
         foo 
       SRC
-      option :src => "puts 'foo'\n"
-      option :src => "fail 'failed'\n"
+      option "puts 'foo'\n"
+      option "fail 'failed'\n"
     end
     prob = Rcert.application[:problem_name]
     prob.set_answer
