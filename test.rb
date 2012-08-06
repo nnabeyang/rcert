@@ -297,4 +297,35 @@ foo
     assert prob.select(0, 1)[1]
     Rcert.application.clear
   end
+  def test_problem_select_multiple_answers
+    Rcert.application.clear
+    program_problem :problem_name do
+      description <<-DESC
+以下のような出力になるものを選択してください。
+      DESC
+      option <<-SRC
+puts ("Ca" 'fe')
+      SRC
+      option <<-'SRC'
+puts (%q!Cafe!)
+      SRC
+      option <<-SRC
+puts 0xCafe
+      SRC
+      option <<-SRC
+puts ?C + ?a + ?f + ?e
+      SRC
+      option <<-SRC
+puts (0800)
+      SRC
+    end
+    prob = Rcert.application[:problem_name]
+    prob.set_answer
+    assert !prob.select(0)[1]
+    assert !prob.select(1)[1]
+    assert !prob.select(2)[1]
+    assert prob.select(0, 1, 3)[1]
+    Rcert.application.clear
+  end
+
 end
