@@ -46,14 +46,22 @@ module Rcert
     def run(&block)
       @path = File.expand_path(DEFAULT_RCERT_FILE)
       load @path if File.exist? @path 
-      @problems.sort_by{rand}.each do|k, p|
-         idx, success = block.call(p)
-         if success
-           @successes.push(p)
-         else
-           @failures.push(FailureProblem.new(idx, p))
-         end
+      if ARGV.size > 0
+        problems = @problems.select {|k, v| ARGV.include?(k.to_s) }
+      else
+        problems = @problems.sort_by{rand}
       end
+      problems.each do|k, p|
+         run_program(p, &block)
+      end
+    end
+    def run_program(problem, &block)
+     idx, success = block.call(problem)
+     if success
+       @successes.push(problem)
+     else
+       @failures.push(FailureProblem.new(idx, problem))
+     end
     end
     def status(out = STDOUT)
       out.puts "score: #{point}/#{@problems.size}"

@@ -190,4 +190,57 @@ class Tests < Test::Unit::TestCase
     assert !prob.select(1)[1]
     Rcert.application.clear
   end
+  def test_application_run_argv
+    ARGV.clear
+    Rcert.application.clear
+    problem :p1 do
+      description <<-DESC
+        以下のコードを実行したとき表示されるものを1つ選択してください
+      DESC
+      src <<-SRC
+        puts "hello_world"[<%= @range %>]
+      SRC
+      option :range => "2..4"
+      option :range => "2...4"
+    end
+    problem :p2 do
+      description <<-DESC
+        以下のコードを実行したとき表示されるものを1つ選択してください
+      DESC
+      src <<-SRC
+        x = ["Ruby", "Perl", "C"]
+        puts x.<%= @method_name %>
+        puts x[0] 
+      SRC
+      option :method_name => "first"
+      option :method_name => "shift"
+    end
+    problem :p3 do
+      description <<-DESC
+        以下のコードを実行したとき表示されるものを1つ選択してください
+      DESC
+      src <<-SRC
+        x = ["Ruby", "Perl", "C"]
+        puts x.<%= @method_name %>
+        puts x[0] 
+      SRC
+      option :method_name => "first"
+      option :method_name => "shift"
+    end
+ 
+    original_dir = Dir.pwd
+    Dir.chdir('./data/')
+    plist = []
+    ARGV << "p2" << "p1"
+    Rcert.application.run do|p|
+      plist << p.name
+      [0, true]
+    end
+    assert_equal [:p1, :p2], plist
+    ARGV.clear
+    Rcert.application.clear
+  ensure
+    Dir.chdir(original_dir)
+  end
+ 
 end
