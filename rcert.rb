@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 require 'erb'
 require 'stringio'
+require 'time'
 class ERB
   def self.call(source)
     new(source, nil, nil, 'output_buffer').src
@@ -28,7 +29,7 @@ module Rcert
     def to_s
        template = [ 
       "<%= @problem.name %>:\n",
-      "expected:<%= @problem.answer.out.inspect %>, \n",
+      "expected:<%= @problem.answer.out.inspect %>, ",
       "actual:<%= @actual.out.inspect %>"
       ].join
       ERB.new(template).result(binding)
@@ -42,7 +43,8 @@ module Rcert
       @failures = []
     end
     def run(&block)
-      load DEFAULT_RCERT_FILE if File.exist? DEFAULT_RCERT_FILE
+      @path = File.expand_path(DEFAULT_RCERT_FILE)
+      load @path if File.exist? @path 
       @problems.sort_by{rand}.each do|k, p|
          idx, success = block.call(p)
          @failures.push(FailureProblem.new(idx, p)) unless success
@@ -52,9 +54,13 @@ module Rcert
       out.puts "score: #{point}/#{@problems.size}"
     end
     def report_result(out = STDOUT)
+      out.puts "load:#{@path}"
+      datetime_line = "--------#{Time.now.strftime("%Y-%m-%d %H:%M:%S")}-----------"
+      out.puts datetime_line
       @failures.each do|f|
         out.puts f
       end 
+      puts  ('-'*datetime_line.size)
     end
     def point
       @problems.size - @failures.size
