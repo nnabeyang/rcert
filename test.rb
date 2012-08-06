@@ -168,14 +168,18 @@ class Tests < Test::Unit::TestCase
       description <<-DESC
         以下のコードを実行したとき表示されるものを1つ選択してください
       DESC
-      src <<-SRC
+      option <<-RUBY
         def foo
-          <%= @src %>
+          puts 'foo'
         end
-        foo 
-      SRC
-      option "puts 'foo'\n"
-      option "fail 'failed'\n"
+        foo
+      RUBY
+      option <<-RUBY
+        def foo
+          fail 'failed'
+        end
+        foo
+      RUBY
     end
     prob = Rcert.application[:problem_name]
     prob.set_answer

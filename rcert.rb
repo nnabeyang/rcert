@@ -196,6 +196,10 @@ module Rcert
     end
   end
   class ProgramProblem < Problem
+    def initialize(name, data = nil)
+      super
+      src "<%= @src %>"
+    end
     def option(value)
       super :src => value
     end
