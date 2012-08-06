@@ -22,15 +22,16 @@ module Rcert
   end
   class FailureProblem
     def initialize(idx, problem)
+      @idx = idx
       @problem = problem
-      @expected = problem.answer
-      @actual = problem.options[idx]
+      #@expected = problem.answer
+      #@actual = problem.options[idx]
     end
     def to_s
        template = [ 
       "<%= @problem.name %>:\n",
-      "expected:<%= @problem.answer.out.inspect %>, ",
-      "actual:<%= @actual.out.inspect %>"
+      "expected:<%= @problem.render_answer %>, ",
+      "actual:<%= @problem.render_option(@idx) %>"
       ].join
       ERB.new(template).result(binding)
     end
@@ -157,6 +158,12 @@ module Rcert
       "<% end %>"
       ].join
       ERB.new(template).result(binding)
+    end
+    def render_option idx
+      @options[idx].out.inspect
+    end
+    def render_answer
+      @answer.out.inspect
     end
     def src data
       @code_template = data
