@@ -20,4 +20,5 @@ Rcert.application.run do|p|
   /\A(\d)/ =~ line 
   p.select($1.to_i)
 end
+Rcert.application.report_result
 Rcert.application.status
