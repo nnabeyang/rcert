@@ -146,5 +146,17 @@ class Tests < Test::Unit::TestCase
     assert prob.select(3)[1]
     assert_equal "<error>", prob.options[0].out
     Rcert.application.clear
-  end 
+  end
+  def test_context
+    s = StringIO.new
+    $stdout = s
+    Rcert::Context.class_eval(<<-SRC, 'fname', 1)
+      def foo1234
+       puts "foo"
+      end
+      foo1234
+    SRC
+    assert_equal "foo\n", s.string
+    $stdout = STDOUT
+  end
 end

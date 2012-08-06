@@ -78,6 +78,14 @@ module Rcert
       @problems[key.to_s]
     end
   end
+  class Context
+    def self.instance
+      @instance ||= new
+    end
+    def self.method_missing(*args, &block)
+      instance.send(*args, &block)
+    end
+  end
   class Option
     include Helper
     attr_reader :out, :attrs
@@ -86,6 +94,7 @@ module Rcert
       attrs.each do|k, v|
         instance_variable_set("@#{k}", v)
       end
+      @context = Context
     end
     def to_s
       @code
@@ -95,7 +104,7 @@ module Rcert
       $stdout = s
       @code = send(name)
       begin
-        Kernel.eval(@code, nil, name, 1)
+        @context.class_eval(@code, name, 1)
         @out = s.string
       rescue => e
         @out = "<error>"
