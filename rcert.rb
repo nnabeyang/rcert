@@ -101,7 +101,6 @@ module Rcert
     end
   end
   class Option
-    include Helper
     attr_reader :out, :attrs
     def initialize(attrs)
       @attrs = attrs
@@ -129,6 +128,7 @@ module Rcert
     end
   end
   class Problem
+    include Helper
     attr_reader :options, :name, :answer
     attr_writer :answer
     def initialize(name, data = nil)

@@ -3,11 +3,12 @@ problem :problem_1 do
   size = 5
   f = rand(size-1)
   l = f + 1 + rand(size-(f + 1))
+  str = random_string(size)
   description <<-DESC
 以下のコードを実行したとき表示されるものを1つ選択してください
 DESC
   src <<-SRC
-puts "<%= random_string(#{size}) %>"[<%= @range %>]
+puts "#{str}"[<%= @range %>]
 SRC
   option :range => "#{f}..#{l}"
   option :range => "#{f}...#{l}" 
