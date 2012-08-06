@@ -54,3 +54,16 @@ method_problem :problem_4 do
   option "inject"
   option "each_with_index"
 end
+
+method_problem :problem_5 do
+  description <<-DESC
+以下のコードを実行したとき表示されるものを選択してください
+  DESC
+  src <<-SRC
+puts [1, 2, 3, 4].<%= @method_name %> {|x| x*x}.inspect
+  SRC
+  option "collect"
+  option "map"
+  option "each"
+end
+
