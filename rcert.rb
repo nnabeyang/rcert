@@ -159,7 +159,7 @@ module Rcert
         end
       RUBY
     end
-    def add_option(value)
+    def option(value)
       option = Option.new(value)
       klass = option.singleton_class
       klass.class_eval(@code) 
@@ -179,7 +179,6 @@ module Rcert
     def description text
       @desc = text
     end
-    alias option add_option 
   end
   class MethodProblem < Problem
     def render

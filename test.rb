@@ -13,8 +13,8 @@ class Tests < Test::Unit::TestCase
     prob = Rcert::Problem.new :problem_name, <<-SRC
       puts "<%= @say %>"
     SRC
-    prob.add_option :say => 'hello'
-    prob.add_option :say => 'world' 
+    prob.option :say => 'hello'
+    prob.option :say => 'world' 
     prob.set_answer
     assert prob.select(0)[1]
     assert !prob.select(1)[1]
