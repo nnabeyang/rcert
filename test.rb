@@ -164,21 +164,24 @@ class Tests < Test::Unit::TestCase
   end
   def test_src_define_method
      Rcert.application.clear
-    method_problem :problem_name do
+    program_problem :problem_name do
       description <<-DESC
         以下のコードを実行したとき表示されるものを1つ選択してください
       DESC
       src <<-SRC
         def foo
-          <%= @frag %>
+          <%= @src %>
         end
         foo 
       SRC
-      option :frag => "puts 'foo'"
-      option :frag => "fail 'faled'"
+      option :src => "puts 'foo'\n"
+      option :src => "fail 'failed'\n"
     end
     prob = Rcert.application[:problem_name]
     prob.set_answer
+    out = prob.render
+    assert_match /puts 'foo'/, out
+    assert_match /fail 'failed'/, out
     assert prob.select(0)[1]
     assert !prob.select(1)[1]
     Rcert.application.clear

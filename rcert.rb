@@ -196,6 +196,22 @@ module Rcert
       ERB.new(template).result(binding)
     end
   end
+  class ProgramProblem < Problem
+    def render
+      template = [ 
+      "<%= @desc %>",
+      "<% unless @answer.out.to_s.chomp.empty? %>",
+      "---------\n",
+      "<%= @answer.out %>",
+      "---------\n",
+      "<% end %>",
+      "<% options.each_with_index do|opt, i| %>",
+      "<%= i %>)\n<%= opt.attrs[:src].to_s %>",
+      "<% end %>"
+      ].join
+      ERB.new(template).result(binding)
+    end
+  end
   extend Helper
 end
 def problem(name, &block)
@@ -203,4 +219,7 @@ def problem(name, &block)
 end
 def method_problem(name, &block)
   Rcert::MethodProblem.define_problem(name, &block)
+end
+def program_problem(name, &block)
+  Rcert::ProgramProblem.define_problem(name, &block)
 end
