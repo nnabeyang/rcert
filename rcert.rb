@@ -196,6 +196,12 @@ module Rcert
     end
   end
   class MethodProblem < Problem
+    def render_option idx
+      @options[idx].attrs[:method_name]
+    end
+    def render_answer
+      @answer.attrs[:method_name]
+    end
     def render
       template = [ 
       "<%= @desc %>",
@@ -216,7 +222,13 @@ module Rcert
       src "<%= @src %>"
     end
     def option(value)
-      super :src => value
+      super :src => value.sub(/\A\s*/, '')
+    end
+    def render_option idx
+      "\n#{@options[idx].attrs[:src]}"
+    end
+    def render_answer
+      "\n#{@answer.attrs[:src]}"
     end
     def render
       template = [ 

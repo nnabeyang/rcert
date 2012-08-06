@@ -65,7 +65,7 @@ class Tests < Test::Unit::TestCase
       option :range => "2..4"
       option :range => "2...4"
     end
-    problem :problem_2 do
+    method_problem :problem_2 do
       description <<-DESC
         以下のコードを実行したとき表示されるものを1つ選択してください
       DESC
@@ -77,29 +77,50 @@ class Tests < Test::Unit::TestCase
       option :method_name => "first"
       option :method_name => "shift"
     end
+    src1 = <<-RUBY
+def foo
+  puts 'foo'
+  end
+foo
+    RUBY
+    src2 = <<-RUBY
+def foo
+  fail 'failed'
+end
+foo
+      RUBY
+ 
+    program_problem :problem_3 do
+      description <<-DESC
+        以下のコードを実行したとき表示されるものを1つ選択してください
+      DESC
+      option src1
+      option src2
+    end
+ 
     original_dir = Dir.pwd
     Dir.chdir('./data/')
-    answers = [0, 1]
     out = StringIO.new
     Rcert.application.status(out)
-    assert_match %r"0/2$", out.string
+    assert_match %r"0/3$", out.string
     Rcert.application.run do|p|
       p.set_answer
-      p.select(answers.shift)
+      p.select(1)
     end
     out = StringIO.new
     Rcert.application.status(out)
-    assert_match %r"1/2$", out.string
+    assert_match %r"0/3$", out.string
     out.string = ""
     Rcert.application.report_result(out)
-    case out.string
-    when /\Aproblem_2:$/
-      assert_match /"Ruby\\nRuby\\n"/, out.string
-      assert_match /"Ruby\\nPerl\\n"$/, out.string
-    when /\Aproblem_1:$/
-      assert_match /"llo\\n"/, out.string
-      assert_match /"ll\\n"$/, out.string
-    end
+    assert_match /^problem_1:$/, out.string
+    assert_match /"llo\\n"/, out.string
+    assert_match /"ll\\n"$/, out.string
+    assert_match /^problem_2:$/, out.string
+    assert_match /first/, out.string
+    assert_match /shift/, out.string
+    assert_match /^problem_3:$/, out.string
+    assert_match /#{src1.sub(/\A\s*/, '')}/m, out.string
+    assert_match /#{src2.sub(/\A\s*/, '')}/m, out.string
     Rcert.application.clear
   ensure
     Dir.chdir(original_dir)
@@ -242,5 +263,4 @@ class Tests < Test::Unit::TestCase
   ensure
     Dir.chdir(original_dir)
   end
- 
 end
