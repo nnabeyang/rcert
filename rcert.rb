@@ -133,7 +133,6 @@ module Rcert
     def initialize(name, data = nil)
       @name = name
       @options = []
-      @error_options = []
       src(data) if data
     end
     class << self
@@ -142,9 +141,9 @@ module Rcert
       end
     end
     def set_answer
-      runnable_options = (@options - @error_options)
-      @answer = runnable_options.shift
-      @answers = runnable_options.select {|opt| opt.out == @answer.out} << @answer
+      options = @options.dup
+      @answer = options.shift
+      @answers = options.select {|opt| opt.out == @answer.out} << @answer
     end
     def prepare
       @options = @options.sort_by {rand}
@@ -179,14 +178,11 @@ module Rcert
       option = Option.new(value)
       klass = option.singleton_class
       klass.class_eval(@code) 
-      begin
-        option.eval "_#{@name}"
-      rescue Exception
-        @error_options.push(option)
-      ensure
-        @options << option 
-        option
-      end
+      option.eval "_#{@name}"
+    rescue Exception
+    ensure
+      @options << option 
+      option
     end
     def select(*indices)
       failure_indices = []

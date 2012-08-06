@@ -152,22 +152,38 @@ foo
   end
   def test_problem_with_error_code
     Rcert.application.clear
-    method_problem :problem_name do
+    method_problem :problem_1 do
       description <<-DESC
-        以下のコードを実行したとき表示されるものを1つ選択してください
+        以下のコードを実行したとき表示されるものを全て選択してください
+      DESC
+      src <<-SRC
+        [0, 1, 4, 9].<%= @method_name %> {|x, y| p [x, y]}
+      SRC
+      option "each_with_index"
+      option "no_such_method"
+      option "no_such_method2"
+      option "no_such_method3"
+    end
+    prob = Rcert.application[:problem_1]
+    prob.set_answer
+    assert prob.select(0)[1]
+    assert !prob.select(3)[1]
+    method_problem :problem_2 do
+      description <<-DESC
+        以下のコードを実行したとき表示されるものを全て選択してください
       DESC
       src <<-SRC
         [0, 1, 4, 9].<%= @method_name %> {|x, y| p [x, y]}
       SRC
       option "no_such_method"
+      option "each_with_index"
       option "no_such_method2"
       option "no_such_method3"
-      option "each_with_index"
     end
-    prob = Rcert.application[:problem_name]
+    prob = Rcert.application[:problem_2]
     prob.set_answer
     assert !prob.select(0)[1]
-    assert prob.select(3)[1]
+    assert prob.select(0, 2, 3)[1]
     assert_equal "<error>", prob.options[0].out
     Rcert.application.clear
   end
