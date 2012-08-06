@@ -53,7 +53,7 @@ class Tests < Test::Unit::TestCase
     assert !prob.select(1)
     Rcert.application.clear
   end
-  def test_application_load_rcertfile
+  def test_application_run
     Rcert.application.clear
     str = Rcert::random_string(5)
     problem :problem_1 do
