@@ -23,12 +23,12 @@ x = #{array}
   puts x.<%= @method_name %>
   puts x[0] 
 SRC
-  option :method_name => "first" 
-  option :method_name => "shift" 
+  option "first" 
+  option "shift" 
 end
 
 problem :problem_3 do
-array = (1..4).sort_by {rand}
+array = (2..5).sort_by {rand}
     description <<-DESC
 以下のコードを実行したとき表示されるものを1つ選択してください
 DESC
@@ -49,8 +49,7 @@ method_problem :problem_4 do
   src <<-SRC
 [0, 1, 2, 3].<%= @method_name %> {|x, y| p [x, y]}
   SRC
-  option :method_name => "map"
-  option :method_name => "each"
-  option :method_name => "each_with_index"
+  option "map"
+  option "inject"
+  option "each_with_index"
 end
-
