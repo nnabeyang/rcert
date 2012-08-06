@@ -24,8 +24,6 @@ module Rcert
     def initialize(idx, problem)
       @idx = idx
       @problem = problem
-      #@expected = problem.answer
-      #@actual = problem.options[idx]
     end
     def to_s
        template = [ 
