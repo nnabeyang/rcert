@@ -80,6 +80,9 @@ class Tests < Test::Unit::TestCase
     original_dir = Dir.pwd
     Dir.chdir('./data/')
     answers = [0, 1]
+    out = StringIO.new
+    Rcert.application.status(out)
+    assert_match %r"0/2$", out.string
     Rcert.application.run do|p|
       p.set_answer
       p.select(answers.shift)

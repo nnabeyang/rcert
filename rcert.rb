@@ -41,13 +41,18 @@ module Rcert
     def initialize
       @problems = {}
       @failures = []
+      @successes = []
     end
     def run(&block)
       @path = File.expand_path(DEFAULT_RCERT_FILE)
       load @path if File.exist? @path 
       @problems.sort_by{rand}.each do|k, p|
          idx, success = block.call(p)
-         @failures.push(FailureProblem.new(idx, p)) unless success
+         if success
+           @successes.push(p)
+         else
+           @failures.push(FailureProblem.new(idx, p))
+         end
       end
     end
     def status(out = STDOUT)
@@ -63,7 +68,7 @@ module Rcert
       out.puts  ('-'*datetime_line.size)
     end
     def point
-      @problems.size - @failures.size
+      @successes.size
     end
     def clear
       @problems.clear
