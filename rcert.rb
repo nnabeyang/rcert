@@ -60,7 +60,7 @@ module Rcert
       @failures.each do|f|
         out.puts f
       end 
-      puts  ('-'*datetime_line.size)
+      out.puts  ('-'*datetime_line.size)
     end
     def point
       @problems.size - @failures.size
