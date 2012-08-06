@@ -235,10 +235,10 @@ module Rcert
       super :src => value.sub(/\A\s*/, '')
     end
     def render_option indices
-      "\n#{@options[indices.first].attrs[:src]}"
+      "\n#{indices.map{|i| @options[i].attrs[:src]}.join(",\n")}"
     end
     def render_answer
-      "\n#{@answer.attrs[:src]}"
+      "\n#{@answers.map{|ans| ans.attrs[:src]}.join(",\n")}"
     end
     def render
       template = [ 

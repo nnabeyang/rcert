@@ -327,5 +327,70 @@ puts (0800)
     assert prob.select(0, 1, 3)[1]
     Rcert.application.clear
   end
+  def test_method_problem_error_messages
+    Rcert.application.clear
+    method_problem :problem_name do
+      description <<-DESC
+        以下のコードを実行したとき表示されるものを選択してください
+      DESC
+      src <<-SRC
+        puts [1, 2, 3, 4].<%= @method_name %> {|x| x*x}.inspect
+      SRC
+      option "collect"
+      option "map"
+      option "each"
+    end
+    original_dir = Dir.pwd
+    Dir.chdir('./data/')
+    Rcert.application.run do|p|
+      p.set_answer
+      p.select(0, 2)
+    end
+    out = StringIO.new
+    Rcert.application.report_result(out)
+    assert_match /["map", "collect"]/, out.string
+    assert_match /["collect", "each"]/, out.string
+    Rcert.application.clear
+  ensure
+    Dir.chdir(original_dir)
+  end
+  def test_program_problem_error_messages
+    Rcert.application.clear
+    program_problem :problem_name do
+      description <<-DESC
+以下のような出力になるものを選択してください。
+      DESC
+      option <<-SRC
+puts ("Ca" 'fe')
+      SRC
+      option <<-'SRC'
+puts (%q!Cafe!)
+      SRC
+      option <<-SRC
+puts 0xCafe
+      SRC
+      option <<-SRC
+puts ?C + ?a + ?f + ?e
+      SRC
+      option <<-SRC
+puts (0800)
+      SRC
+    end
+    original_dir = Dir.pwd
+    Dir.chdir('./data/')
+    Rcert.application.run do|p|
+      p.set_answer
+      p.select(0, 2)
+    end
+    out = StringIO.new
+    Rcert.application.report_result(out)
+    assert_match /puts \(%q!Cafe!\)/, out.string
+    assert_match /puts \?C \+ \?a \+ \?f \+ \?e/, out.string
+    assert_match /puts \("Ca" 'fe'\)/, out.string
+    assert_match /puts 0xCafe/, out.string
+    Rcert.application.clear
+  ensure
+    Dir.chdir(original_dir)
+  end
 
 end
