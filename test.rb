@@ -264,4 +264,15 @@ foo
       Dir.chdir(original_dir)
     end
   end
+  def test_rescue_syntax_error
+     Rcert.application.clear
+    program_problem :problem_name do
+      description <<-DESC
+        以下のコードを実行したとき表示されるものを1つ選択してください
+      DESC
+      option "puts 'hello"
+      option "puts 'hello'" 
+    end
+    Rcert.application.clear
+  end
 end

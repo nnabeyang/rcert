@@ -120,7 +120,7 @@ module Rcert
       begin
         @context.class_eval(@code, name, 1)
         @out = s.string
-      rescue => e
+      rescue Exception => e
         @out = "<error>"
         raise e
       end
@@ -180,7 +180,7 @@ module Rcert
       klass.class_eval(@code) 
       begin
         option.eval "_#{@name}"
-      rescue
+      rescue Exception
         @error_options.push(option)
       ensure
         @options << option 
