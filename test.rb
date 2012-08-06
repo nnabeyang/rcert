@@ -16,8 +16,8 @@ class Tests < Test::Unit::TestCase
     prob.add_option :say => 'hello'
     prob.add_option :say => 'world' 
     prob.set_answer
-    assert prob.select(0)
-    assert !prob.select(1)
+    assert prob.select(0)[1]
+    assert !prob.select(1)[1]
   end
   def test_application_define_problem
     app = Rcert::Application.new
@@ -31,8 +31,8 @@ class Tests < Test::Unit::TestCase
     end
     prob = app[:problem_name]
     prob.set_answer
-    assert prob.select(0)
-    assert !prob.select(1)
+    assert prob.select(0)[1]
+    assert !prob.select(1)[1]
   end
   def test_problem
     Rcert.application.clear
@@ -49,19 +49,18 @@ class Tests < Test::Unit::TestCase
     end
     prob = Rcert.application[:problem_name]
     prob.set_answer
-    assert prob.select(0)
-    assert !prob.select(1)
+    assert prob.select(0)[1]
+    assert !prob.select(1)[1]
     Rcert.application.clear
   end
   def test_application_run
     Rcert.application.clear
-    str = Rcert::random_string(5)
     problem :problem_1 do
       description <<-DESC
         以下のコードを実行したとき表示されるものを1つ選択してください
       DESC
       src <<-SRC
-        puts "#{str}"[<%= @range %>]
+        puts "hello_world"[<%= @range %>]
       SRC
       option :range => "2..4"
       option :range => "2...4"
@@ -78,15 +77,29 @@ class Tests < Test::Unit::TestCase
       option :method_name => "first"
       option :method_name => "shift"
     end
+    original_dir = Dir.pwd
+    Dir.chdir('./data/')
     answers = [0, 1]
     Rcert.application.run do|p|
       p.set_answer
-      p.select(0)
+      p.select(answers.shift)
     end
     out = StringIO.new
     Rcert.application.status(out)
+    assert_match %r"1/2$", out.string
+    out.string = ""
+    Rcert.application.report_result(out)
+    case out.string
+    when /\Aproblem_2:$/
+      assert_match /"Ruby\\nRuby\\n"/, out.string
+      assert_match /"Ruby\\nPerl\\n"$/, out.string
+    when /\Aproblem_1:$/
+      assert_match /"llo\\n"/, out.string
+      assert_match /"ll\\n"$/, out.string
+    end
     Rcert.application.clear
-    assert_match %r"\d+/\d+$", out.string
+  ensure
+    Dir.chdir(original_dir)
   end
   def test_method_problem
     Rcert.application.clear
@@ -109,8 +122,8 @@ class Tests < Test::Unit::TestCase
     assert_match /Ruby\nRuby\n/, out 
     assert_match /first/, out 
     assert_match /shift/, out
-    assert prob.select(0)
-    assert !prob.select(1)
+    assert prob.select(0)[1]
+    assert !prob.select(1)[1]
     Rcert.application.clear
   end
   def test_problem_with_error_code
@@ -129,8 +142,8 @@ class Tests < Test::Unit::TestCase
     end
     prob = Rcert.application[:problem_name]
     prob.set_answer
-    assert !prob.select(0)
-    assert prob.select(3)
+    assert !prob.select(0)[1]
+    assert prob.select(3)[1]
     Rcert.application.clear
   end
 end

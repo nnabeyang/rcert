@@ -19,23 +19,49 @@ module Rcert
       @app ||= Application.new
     end
   end
+  class FailureProblem
+    def initialize(idx, problem)
+      @problem = problem
+      @expected = problem.answer
+      @actual = problem.options[idx]
+    end
+    def to_s
+       template = [ 
+      "<%= @problem.name %>:\n",
+      "expected:<%= @problem.answer.out.inspect %>, \n",
+      "actual:<%= @actual.out.inspect %>"
+      ].join
+      ERB.new(template).result(binding)
+    end
+  end
   DEFAULT_RCERT_FILE = 'Rcertfile'
   class Application
+    attr_reader :problems
     def initialize
       @problems = {}
-      @point = 0
+      @failures = []
     end
     def run(&block)
       load DEFAULT_RCERT_FILE if File.exist? DEFAULT_RCERT_FILE
       @problems.sort_by{rand}.each do|k, p|
-        @point += 1 if block.call(p)
+         idx, success = block.call(p)
+         @failures.push(FailureProblem.new(idx, p)) unless success
       end
     end
     def status(out = STDOUT)
-      out.puts "score: #{@point}/#{@problems.size}"
+      out.puts "score: #{point}/#{@problems.size}"
+    end
+    def report_result(out = STDOUT)
+      @failures.each do|f|
+        out.puts f
+      end 
+    end
+    def point
+      @problems.size - @failures.size
     end
     def clear
       @problems.clear
+      @failures.clear
     end
     def define_problem(problem_class, name, &block)
       prob = problem_class.new(name)
@@ -69,7 +95,7 @@ module Rcert
     end
   end
   class Problem
-    attr_reader :options, :name
+    attr_reader :options, :name, :answer
     attr_writer :answer
     def initialize(name, data = nil)
       @name = name
@@ -122,7 +148,8 @@ module Rcert
       end
     end
     def select(idx)
-      return (@answer.out == @options[idx].out)? true : false 
+      success = (@answer.out == @options[idx].out)? true : false
+      return [idx, success]
     end
     def description text
       @desc = text
