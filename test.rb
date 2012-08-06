@@ -159,4 +159,25 @@ class Tests < Test::Unit::TestCase
     assert_equal "foo\n", s.string
     $stdout = STDOUT
   end
+  def test_src_define_method
+     Rcert.application.clear
+    method_problem :problem_name do
+      description <<-DESC
+        以下のコードを実行したとき表示されるものを1つ選択してください
+      DESC
+      src <<-SRC
+        def foo
+          <%= @frag %>
+        end
+        foo 
+      SRC
+      option :frag => "puts 'foo'"
+      option :frag => "fail 'faled'"
+    end
+    prob = Rcert.application[:problem_name]
+    prob.set_answer
+    assert prob.select(0)[1]
+    assert !prob.select(1)[1]
+    Rcert.application.clear
+  end
 end
