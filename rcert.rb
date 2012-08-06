@@ -196,6 +196,9 @@ module Rcert
     end
   end
   class MethodProblem < Problem
+    def option(value)
+      super :method_name => value
+    end
     def render_option idx
       @options[idx].attrs[:method_name]
     end

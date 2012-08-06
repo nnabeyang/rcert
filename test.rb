@@ -74,8 +74,8 @@ class Tests < Test::Unit::TestCase
         puts x.<%= @method_name %>
         puts x[0] 
       SRC
-      option :method_name => "first"
-      option :method_name => "shift"
+      option "first"
+      option "shift"
     end
     src1 = <<-RUBY
 def foo
@@ -137,8 +137,8 @@ foo
         puts x.<%= @method_name %>
         puts x[0] 
       SRC
-      option :method_name => "first"
-      option :method_name => "shift"
+      option "first"
+      option "shift"
     end
     prob = Rcert.application[:problem_name]
     prob.set_answer
@@ -159,10 +159,10 @@ foo
       src <<-SRC
         [0, 1, 4, 9].<%= @method_name %> {|x, y| p [x, y]}
       SRC
-      option :method_name => "no_such_method"
-      option :method_name => "no_such_method2"
-      option :method_name => "no_such_method3"
-      option :method_name => "each_with_index"
+      option "no_such_method"
+      option "no_such_method2"
+      option "no_such_method3"
+      option "each_with_index"
     end
     prob = Rcert.application[:problem_name]
     prob.set_answer
@@ -248,19 +248,20 @@ foo
       option :method_name => "first"
       option :method_name => "shift"
     end
- 
     original_dir = Dir.pwd
     Dir.chdir('./data/')
-    plist = []
-    ARGV << "p2" << "p1"
-    Rcert.application.run do|p|
-      plist << p.name
-      [0, true]
+    begin
+      plist = []
+      ARGV << "p2" << "p1"
+      Rcert.application.run do|p|
+        plist << p.name
+        [0, true]
+      end
+      assert_equal [:p1, :p2], plist
+    ensure
+      ARGV.clear
+      Rcert.application.clear
+      Dir.chdir(original_dir)
     end
-    assert_equal [:p1, :p2], plist
-    ARGV.clear
-    Rcert.application.clear
-  ensure
-    Dir.chdir(original_dir)
   end
 end
