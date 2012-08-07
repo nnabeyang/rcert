@@ -205,22 +205,23 @@ foo
       description <<-DESC
         以下のコードを実行したとき表示されるものを1つ選択してください
       DESC
-      option <<-RUBY
+      src <<-RUBY
         def foo
-          puts 'foo'
+        <%= @src %>
         end
         foo
       RUBY
       option <<-RUBY
-        def foo
+          puts 'foo'
+      RUBY
+      option <<-RUBY
           fail 'failed'
-        end
-        foo
       RUBY
     end
     prob = Rcert.application[:problem_name]
     prob.set_answer
     out = prob.render
+    assert_match /def foo/, out
     assert_match /puts 'foo'/, out
     assert_match /fail 'failed'/, out
     assert prob.select(0)[1]

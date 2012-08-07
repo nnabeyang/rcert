@@ -100,7 +100,7 @@ module Rcert
     end
   end
   class Option
-    attr_reader :out, :attrs
+    attr_reader :out, :attrs, :code
     def initialize(attrs)
       @attrs = attrs
       attrs.each do|k, v|
@@ -231,10 +231,10 @@ module Rcert
       super :src => value.sub(/\A\s*/, '')
     end
     def render_option indices
-      "\n#{indices.map{|i| @options[i].attrs[:src]}.join(",\n")}"
+      "\n#{indices.map{|i| @options[i].code}.join(",\n")}"
     end
     def render_answer
-      "\n#{@answers.map{|ans| ans.attrs[:src]}.join(",\n")}"
+      "\n#{@answers.map{|ans| ans.code}.join(",\n")}"
     end
     def render
       template = [ 
@@ -245,7 +245,7 @@ module Rcert
       "---------\n",
       "<% end %>",
       "<% options.each_with_index do|opt, i| %>",
-      "<%= i %>)\n<%= opt.attrs[:src].to_s %>",
+      "<%= i %>)\n<%= opt.code %>",
       "<% end %>"
       ].join
       ERB.new(template).result(binding)
