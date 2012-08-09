@@ -133,7 +133,11 @@ module Rcert
     def initialize(name, data = nil)
       @name = name
       @options = []
+      @desc = default_description 
       src(data) if data
+    end
+    def default_description
+      "以下のコードを実行したとき表示されるものを全て選択してください"
     end
     class << self
       def define_problem(name, &block)

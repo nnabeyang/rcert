@@ -16,6 +16,7 @@ class Tests < Test::Unit::TestCase
     prob.option :say => 'hello'
     prob.option :say => 'world' 
     prob.set_answer
+    assert_equal "以下のコードを実行したとき表示されるものを全て選択してください", prob.default_description
     assert prob.select(0)[1]
     assert !prob.select(1)[1]
   end
@@ -38,9 +39,6 @@ class Tests < Test::Unit::TestCase
     Rcert.application.clear
     str = Rcert::random_string(5)
     problem :problem_name do
-      description <<-DESC
-        以下のコードを実行したとき表示されるものを1つ選択してください
-      DESC
       src <<-SRC
         puts "#{str}"[<%= @range %>]
       SRC
@@ -56,9 +54,6 @@ class Tests < Test::Unit::TestCase
   def test_application_run
     Rcert.application.clear
     problem :problem_1 do
-      description <<-DESC
-        以下のコードを実行したとき表示されるものを1つ選択してください
-      DESC
       src <<-SRC
         puts "hello_world"[<%= @range %>]
       SRC
@@ -66,9 +61,6 @@ class Tests < Test::Unit::TestCase
       option :range => "2...4"
     end
     method_problem :problem_2 do
-      description <<-DESC
-        以下のコードを実行したとき表示されるものを1つ選択してください
-      DESC
       src <<-SRC
         x = ["Ruby", "Perl", "C"]
         puts x.<%= @method_name %>
@@ -91,9 +83,6 @@ foo
       RUBY
  
     program_problem :problem_3 do
-      description <<-DESC
-        以下のコードを実行したとき表示されるものを1つ選択してください
-      DESC
       option src1
       option src2
     end
@@ -129,9 +118,6 @@ foo
     Rcert.application.clear
     str = Rcert::random_string(5)
     method_problem :problem_name do
-      description <<-DESC
-        以下のコードを実行したとき表示されるものを1つ選択してください
-      DESC
       src <<-SRC
         x = ["Ruby", "Perl", "C"]
         puts x.<%= @method_name %>
@@ -153,9 +139,6 @@ foo
   def test_problem_with_error_code
     Rcert.application.clear
     method_problem :problem_1 do
-      description <<-DESC
-        以下のコードを実行したとき表示されるものを全て選択してください
-      DESC
       src <<-SRC
         [0, 1, 4, 9].<%= @method_name %> {|x, y| p [x, y]}
       SRC
@@ -169,9 +152,6 @@ foo
     assert prob.select(0)[1]
     assert !prob.select(3)[1]
     method_problem :problem_2 do
-      description <<-DESC
-        以下のコードを実行したとき表示されるものを全て選択してください
-      DESC
       src <<-SRC
         [0, 1, 4, 9].<%= @method_name %> {|x, y| p [x, y]}
       SRC
@@ -202,9 +182,6 @@ foo
   def test_src_define_method
      Rcert.application.clear
     program_problem :problem_name do
-      description <<-DESC
-        以下のコードを実行したとき表示されるものを1つ選択してください
-      DESC
       src <<-RUBY
         def foo
         <%= @src %>
@@ -232,9 +209,6 @@ foo
     ARGV.clear
     Rcert.application.clear
     problem :p1 do
-      description <<-DESC
-        以下のコードを実行したとき表示されるものを1つ選択してください
-      DESC
       src <<-SRC
         puts "hello_world"[<%= @range %>]
       SRC
@@ -242,9 +216,6 @@ foo
       option :range => "2...4"
     end
     problem :p2 do
-      description <<-DESC
-        以下のコードを実行したとき表示されるものを1つ選択してください
-      DESC
       src <<-SRC
         x = ["Ruby", "Perl", "C"]
         puts x.<%= @method_name %>
@@ -254,9 +225,6 @@ foo
       option :method_name => "shift"
     end
     problem :p3 do
-      description <<-DESC
-        以下のコードを実行したとき表示されるものを1つ選択してください
-      DESC
       src <<-SRC
         x = ["Ruby", "Perl", "C"]
         puts x.<%= @method_name %>
@@ -284,9 +252,6 @@ foo
   def test_rescue_syntax_error
      Rcert.application.clear
     program_problem :problem_name do
-      description <<-DESC
-        以下のコードを実行したとき表示されるものを1つ選択してください
-      DESC
       option "puts 'hello"
       option "puts 'hello'" 
     end
@@ -295,9 +260,6 @@ foo
   def test_method_problem_select_multiple_answers
     Rcert.application.clear
     method_problem :problem_name do
-      description <<-DESC
-        以下のコードを実行したとき表示されるものを選択してください
-      DESC
       src <<-SRC
         puts [1, 2, 3, 4].<%= @method_name %> {|x| x*x}.inspect
       SRC
@@ -317,9 +279,6 @@ foo
   def test_problem_select_multiple_answers
     Rcert.application.clear
     program_problem :problem_name do
-      description <<-DESC
-以下のような出力になるものを選択してください。
-      DESC
       option <<-SRC
 puts ("Ca" 'fe')
       SRC
@@ -347,9 +306,6 @@ puts (0800)
   def test_method_problem_error_messages
     Rcert.application.clear
     method_problem :problem_name do
-      description <<-DESC
-        以下のコードを実行したとき表示されるものを選択してください
-      DESC
       src <<-SRC
         puts [1, 2, 3, 4].<%= @method_name %> {|x| x*x}.inspect
       SRC
@@ -374,9 +330,6 @@ puts (0800)
   def test_program_problem_error_messages
     Rcert.application.clear
     program_problem :problem_name do
-      description <<-DESC
-以下のような出力になるものを選択してください。
-      DESC
       option <<-SRC
 puts ("Ca" 'fe')
       SRC
