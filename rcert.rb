@@ -262,7 +262,6 @@ module Rcert
       ERB.new(template).result(binding)
     end
   end
-  extend Helper
 end
 def problem(name, &block)
   Rcert::Problem.define_problem(name, &block)

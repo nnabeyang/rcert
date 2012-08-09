@@ -5,7 +5,7 @@ require './rcert'
 class Tests < Test::Unit::TestCase
   def test_random_string
      size = 1 + rand(9)
-     s = Rcert.random_string(size)
+     s = Rcert::Problem.new(:problem_name).random_string(size)
      assert_equal size, s.size
      assert_match /\A\w+\z/, s
   end
@@ -22,10 +22,9 @@ class Tests < Test::Unit::TestCase
   end
   def test_application_define_problem
     app = Rcert::Application.new
-    str = Rcert::random_string(5)
     prob = app.define_problem Rcert::Problem, :problem_name do
       src <<-SRC
-        puts "#{str}"[<%= @range %>]
+        puts "#{random_string(5)}"[<%= @range %>]
       SRC
       option :range => "2..4"
       option :range => "2...4"
@@ -36,10 +35,9 @@ class Tests < Test::Unit::TestCase
   end
   def test_problem
     Rcert.application.clear
-    str = Rcert::random_string(5)
     prob = problem :problem_name do
       src <<-SRC
-        puts "#{str}"[<%= @range %>]
+        puts "#{random_string(5)}"[<%= @range %>]
       SRC
       option :range => "2..4"
       option :range => "2...4"
@@ -116,7 +114,6 @@ foo
   end
   def test_method_problem
     Rcert.application.clear
-    str = Rcert::random_string(5)
     prob = method_problem :problem_name do
       src <<-SRC
         x = ["Ruby", "Perl", "C"]
