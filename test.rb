@@ -23,14 +23,13 @@ class Tests < Test::Unit::TestCase
   def test_application_define_problem
     app = Rcert::Application.new
     str = Rcert::random_string(5)
-    app.define_problem Rcert::Problem, :problem_name do
+    prob = app.define_problem Rcert::Problem, :problem_name do
       src <<-SRC
         puts "#{str}"[<%= @range %>]
       SRC
       option :range => "2..4"
       option :range => "2...4"
     end
-    prob = app[:problem_name]
     prob.set_answer
     assert prob.select(0)[1]
     assert !prob.select(1)[1]
@@ -38,14 +37,13 @@ class Tests < Test::Unit::TestCase
   def test_problem
     Rcert.application.clear
     str = Rcert::random_string(5)
-    problem :problem_name do
+    prob = problem :problem_name do
       src <<-SRC
         puts "#{str}"[<%= @range %>]
       SRC
       option :range => "2..4"
       option :range => "2...4"
     end
-    prob = Rcert.application[:problem_name]
     prob.set_answer
     assert prob.select(0)[1]
     assert !prob.select(1)[1]
@@ -140,7 +138,7 @@ foo
   end
   def test_problem_with_error_code
     Rcert.application.clear
-    method_problem :problem_1 do
+    prob = method_problem :problem_1 do
       src <<-SRC
         [0, 1, 4, 9].<%= @method_name %> {|x, y| p [x, y]}
       SRC
@@ -149,11 +147,10 @@ foo
       option "no_such_method2"
       option "no_such_method3"
     end
-    prob = Rcert.application[:problem_1]
     prob.set_answer
     assert prob.select(0)[1]
     assert !prob.select(3)[1]
-    method_problem :problem_2 do
+    prob = method_problem :problem_2 do
       src <<-SRC
         [0, 1, 4, 9].<%= @method_name %> {|x, y| p [x, y]}
       SRC
@@ -162,7 +159,6 @@ foo
       option "no_such_method2"
       option "no_such_method3"
     end
-    prob = Rcert.application[:problem_2]
     prob.set_answer
     assert !prob.select(0)[1]
     assert prob.select(0, 2, 3)[1]
@@ -261,7 +257,7 @@ foo
   end
   def test_method_problem_select_multiple_answers
     Rcert.application.clear
-    method_problem :problem_name do
+    prob = method_problem :problem_name do
       src <<-SRC
         puts [1, 2, 3, 4].<%= @method_name %> {|x| x*x}.inspect
       SRC
@@ -269,7 +265,6 @@ foo
       option "map"
       option "each"
     end
-    prob = Rcert.application[:problem_name]
     prob.set_answer
     assert !prob.select(0)[1]
     assert !prob.select(1)[1]
@@ -280,7 +275,7 @@ foo
   end
   def test_problem_select_multiple_answers
     Rcert.application.clear
-    program_problem :problem_name do
+    prob = program_problem :problem_name do
       option <<-SRC
 puts ("Ca" 'fe')
       SRC
@@ -297,7 +292,6 @@ puts ?C + ?a + ?f + ?e
 puts (0800)
       SRC
     end
-    prob = Rcert.application[:problem_name]
     prob.set_answer
     assert !prob.select(0)[1]
     assert !prob.select(1)[1]
@@ -364,5 +358,4 @@ puts (0800)
   ensure
     Dir.chdir(original_dir)
   end
-
 end
