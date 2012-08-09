@@ -92,32 +92,34 @@ foo
     out = StringIO.new
     Rcert.application.status(out)
     assert_match %r"0/3$", out.string
-    Rcert.application.run do|p|
-      p.set_answer
-      p.select(1)
+    begin
+      Rcert.application.run do|p|
+        p.set_answer
+        p.select(1)
+      end
+      out = StringIO.new
+      Rcert.application.status(out)
+      assert_match %r"0/3$", out.string
+      out.string = ""
+      Rcert.application.report_result(out)
+      assert_match /^problem_1:$/, out.string
+      assert_match /"llo\\n"/, out.string
+      assert_match /"ll\\n"$/, out.string
+      assert_match /^problem_2:$/, out.string
+      assert_match /first/, out.string
+      assert_match /shift/, out.string
+      assert_match /^problem_3:$/, out.string
+      assert_match /#{src1.sub(/\A\s*/, '')}/m, out.string
+      assert_match /#{src2.sub(/\A\s*/, '')}/m, out.string
+      Rcert.application.clear
+    ensure
+      Dir.chdir(original_dir)
     end
-    out = StringIO.new
-    Rcert.application.status(out)
-    assert_match %r"0/3$", out.string
-    out.string = ""
-    Rcert.application.report_result(out)
-    assert_match /^problem_1:$/, out.string
-    assert_match /"llo\\n"/, out.string
-    assert_match /"ll\\n"$/, out.string
-    assert_match /^problem_2:$/, out.string
-    assert_match /first/, out.string
-    assert_match /shift/, out.string
-    assert_match /^problem_3:$/, out.string
-    assert_match /#{src1.sub(/\A\s*/, '')}/m, out.string
-    assert_match /#{src2.sub(/\A\s*/, '')}/m, out.string
-    Rcert.application.clear
-  ensure
-    Dir.chdir(original_dir)
   end
   def test_method_problem
     Rcert.application.clear
     str = Rcert::random_string(5)
-    method_problem :problem_name do
+    prob = method_problem :problem_name do
       src <<-SRC
         x = ["Ruby", "Perl", "C"]
         puts x.<%= @method_name %>
@@ -126,8 +128,8 @@ foo
       option "first"
       option "shift"
     end
-    prob = Rcert.application[:problem_name]
     prob.set_answer
+    assert_equal "以下のように出力されるメソッドを全て選択してください", prob.default_description
     out = prob.render
     assert_match /Ruby\nRuby\n/, out 
     assert_match /first/, out 

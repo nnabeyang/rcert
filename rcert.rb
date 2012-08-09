@@ -85,7 +85,8 @@ module Rcert
     def define_problem(problem_class, name, &block)
       prob = problem_class.new(name)
       @problems[name.to_s] = prob
-      prob.instance_eval(&block) 
+      prob.instance_eval(&block)
+      prob
     end
     def [](key)
       @problems[key.to_s]
@@ -205,6 +206,9 @@ module Rcert
   class MethodProblem < Problem
     def option(value)
       super :method_name => value
+    end
+    def default_description
+      "以下のように出力されるメソッドを全て選択してください"
     end
     def render_option indices
       indices.map {|i| @options[i].attrs[:method_name]}
