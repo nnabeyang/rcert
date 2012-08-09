@@ -1,16 +1,14 @@
 # -*- encoding: utf-8 -*-
-problem :problem_1 do
-  size = 5
-  f = rand(size-1)
-  l = f + 1 + rand(size-(f + 1))
-  str = random_string(size)
+problem :range_operator do
   description <<-DESC
-以下のコードを実行したとき表示されるものを1つ選択してください
+以下のコードを実行したとき表示されるものを全て選択してください
 DESC
   src <<-SRC
-puts "#{str}"[<%= @range %>]
+puts "#{random_string(5)}"[<%= @range %>]
 SRC
-  option :range => "#{f}..#{l}"
-  option :range => "#{f}...#{l}" 
+  option :range => "2..-1"
+  option :range => "2...-1" 
+  option :range => "2..4" 
+  option :range => "3..4" 
 end
 
