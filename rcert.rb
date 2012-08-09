@@ -235,6 +235,9 @@ module Rcert
       super
       src "<%= @src %>"
     end
+    def default_description
+      "以下のように出力されるコードを全て選択してください"
+    end
     def option(value)
       super :src => value.sub(/\A\s*/, '')
     end

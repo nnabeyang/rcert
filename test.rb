@@ -183,7 +183,7 @@ foo
   end
   def test_src_define_method
      Rcert.application.clear
-    program_problem :problem_name do
+    prob = program_problem :problem_name do
       src <<-RUBY
         def foo
         <%= @src %>
@@ -197,8 +197,8 @@ foo
           fail 'failed'
       RUBY
     end
-    prob = Rcert.application[:problem_name]
     prob.set_answer
+    assert_equal "以下のように出力されるコードを全て選択してください", prob.default_description
     out = prob.render
     assert_match /def foo/, out
     assert_match /puts 'foo'/, out
