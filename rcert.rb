@@ -218,13 +218,13 @@ module Rcert
     end
     def render
       template = [ 
-      "<%= @desc %>",
+      "<%= @desc %>\n",
       "<%= @code_template %>",
       "---------\n",
       "<%= @answer.out %>",
       "---------\n",
       "<% options.each_with_index do|opt, i| %>",
-      "<%= i %>)<%= opt.attrs %>\n",
+      "<%= i %>)<%= opt.attrs[:method_name] %>\n",
       "<% end %>"
       ].join
       ERB.new(template).result(binding)
@@ -249,7 +249,7 @@ module Rcert
     end
     def render
       template = [ 
-      "<%= @desc %>",
+      "<%= @desc %>\n",
       "<% unless @answer.out.to_s.chomp.empty? %>",
       "---------\n",
       "<%= @answer.out %>",
