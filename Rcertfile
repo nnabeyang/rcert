@@ -1,14 +1,9 @@
 # -*- encoding: utf-8 -*-
 problem :range_operator do
-  description <<-DESC
-以下のコードを実行したとき表示されるものを全て選択してください
-DESC
   src <<-SRC
 puts "#{random_string(5)}"[<%= @range %>]
 SRC
-  option :range => "2..-1"
-  option :range => "2...-1" 
-  option :range => "2..4" 
-  option :range => "3..4" 
+  option :range => "2..4"
+  option :range => "2...4" 
+  option :range => "2, 4" 
 end
-

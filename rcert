@@ -1,6 +1,7 @@
 #!/usr/bin/ruby1.9.1
 # -*- encoding: utf-8 -*-
-require './rcert'
+$: << File.expand_path('..', __FILE__)
+require 'rcert'
 Rcert.application.run do|p|
   p.prepare
   print p.render
