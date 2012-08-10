@@ -156,7 +156,7 @@ module Rcert
     end
     def render
       template = [ 
-      "<%= @desc %>",
+      "<%= @desc %>\n",
       "<%= @answer %>",
       "<% options.each_with_index do|opt, i| %>",
       "<%= i %>)<%= opt.out.inspect %>\n",
