@@ -1,9 +1,108 @@
 # -*- encoding: utf-8 -*-
-problem :range_operator do
+method_problem :range_operator do
   src <<-SRC
-puts "#{random_string(5)}"[<%= @range %>]
+puts "#{random_string(6)}"[<%= @method_name %>]
 SRC
-  option :range => "2..4"
-  option :range => "2...4" 
-  option :range => "2, 4" 
+  option "2..4"
+  option "2...4" 
+  option "2, 4" 
+end
+
+method_problem :array_sort do
+  src <<-SRC
+puts [10, 5, 6].sort <%= @method_name %>
+  SRC
+  option ""
+  option "{|x, y| x - y}"
+  option "{|x, y| y - x}"
+end
+require 'fileutils'
+method_problem :file_seek do
+  src <<-SRC
+FileUtils.rm_f('abc.txt') if File.exist? 'abc.txt'
+File.open('abc.txt', 'a') do|f|
+  f << 'abcdef'
+end
+open('abc.txt', 'r') do|f|
+  i = 0
+  while i < 6 && !f.eof?
+    puts f.read(1)
+    f.seek(1, <%= @method_name %>)
+    i += 1
+  end
+end
+  SRC
+  option 'IO::SEEK_CUR'
+  option 'IO::SEEK_SET'
+  option 'IO::SEEK_END'
+end
+require 'time'
+method_problem :time_strftime do
+  src <<-SRC
+puts Time.now.strftime('<%= @method_name %>')
+  SRC
+  option '%Y/%m'
+  option '%Y/%M'
+  option '%y/%M'
+  option '%y/%b'
+  option '%y/%B'
+end
+
+method_problem :eql_or_equal do
+  src <<-SRC
+s1 = 'abcdefg'
+s2 = s1.dup
+puts s1.<%= @method_name%>(s1)
+puts s1.<%= @method_name%>(s2)
+  SRC
+  option 'eql?'
+  option 'equal?'
+end
+
+method_problem :array_collect_and_map do
+  src <<-SRC
+puts [1, 2, 3].<%= @method_name %> {|i| i*i}
+  SRC
+  option 'map'
+  option 'collect'
+  option 'reject'
+end
+
+method_problem :delete_reject do
+  src <<-SRC
+a = [1, 2, 1, 4, 6]
+puts a.<%= @method_name %>.inspect
+puts a.inspect
+  SRC
+  option 'reject! {|i| i % 2 == 1}'
+  option 'reject {|i| i % 2 == 1}'
+  option 'delete(1)'
+  option 'delete_if {|i| i % 2 == 1}'
+end
+
+method_problem :string_delete do
+  src <<-SRC
+puts "123456789".delete(<%= @method_name %>)
+  SRC
+  option '"2-8", "^4-6"'
+  option '"2378"' 
+  option '"1-9"' 
+end
+
+method_problem :string_delete2 do
+  src <<-SRC
+puts "123456789-".delete(<%= @method_name %>)
+  SRC
+  option '"1-35-"'
+  option '"1-35-9"'
+  option '"1-35-9-"'
+  option '"1-3", "5-9"'
+end
+
+method_problem :chomp_chop do
+  src <<-SRC
+puts "abc\r\n".<%= @method_name %>.<%= @method_name %>
+  SRC
+  option 'chop'
+  option 'chomp'
 end
