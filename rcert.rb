@@ -151,6 +151,7 @@ module Rcert
       @answers = options.select {|opt| opt.out == @answer.out} << @answer
     end
     def prepare
+      @options = @options.sort_by {rand}
       set_answer
       @options = @options.sort_by {rand}
     end
