@@ -1,4 +1,4 @@
-#!/usr/bin/ruby1.9.1
+#!/usr/bin/env ruby
 # -*- encoding: utf-8 -*-
 $: << File.expand_path('..', __FILE__)
 require 'rcert'
