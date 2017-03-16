@@ -100,7 +100,7 @@ puts "123456789-".delete(<%= @method_name %>)
 end
 
 method_problem :chomp_chop do
-  src <<-SRC
+  src <<-'SRC'
 puts "abc\r\n".<%= @method_name %>.<%= @method_name %>
   SRC
   option 'chop'
