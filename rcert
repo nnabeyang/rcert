@@ -2,9 +2,15 @@
 # -*- encoding: utf-8 -*-
 $: << File.expand_path('..', __FILE__)
 require 'rcert'
+options = {}
+if ARGV.detect {|v| v == '-v'}
+  options[:verbose] = true
+  ARGV.delete('-v')
+end
 Rcert.application.run do|p|
   p.prepare
   print p.render
+  Rcert.application.status if options[:verbose]
   while line = STDIN.gets
     case line
     when /\A(\d\s*)+/
