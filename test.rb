@@ -1,8 +1,8 @@
-#!/usr/bin/ruby1.9.1
+#!/usr/bin/env ruby
 # -*- encoding: utf-8 -*-
-require 'test/unit'
+require 'minitest/autorun'
 require './rcert'
-class Tests < Test::Unit::TestCase
+class Tests < MiniTest::Test
   def test_random_string
      size = 1 + rand(9)
      s = Rcert::Problem.new(:problem_name).random_string(size)
