@@ -87,7 +87,7 @@ foo
     Dir.chdir('./data/')
     out = StringIO.new
     Rcert.application.status(out)
-    assert_match %r"0/3$", out.string
+    assert_match %r"\d/3$", out.string
     begin
       Rcert.application.run do|p|
         p.set_answer
