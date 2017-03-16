@@ -51,8 +51,9 @@ module Rcert
       else
         problems = @problems.sort_by{rand}
       end
-      problems.each do|k, p|
-         run_program(p, &block)
+      problems.each_with_index do|obj, i|
+         puts "#{i+1}) #{obj[0]}"
+         run_program(obj[1], &block)
       end
     end
     def run_program(problem, &block)
