@@ -257,11 +257,13 @@ module Rcert
     def render
       template = [ 
       "<%= @desc %>\n",
+      "---------\n",
       "<% unless @answer.out.to_s.chomp.empty? %>",
-      "---------\n",
       "<%= @answer.out %>",
-      "---------\n",
+      "<% else %>",
+      "\n",
       "<% end %>",
+      "---------\n",
       "<% options.each_with_index do|opt, i| %>",
       "<%= i %>)\n<%= opt.code %>",
       "<% end %>"
