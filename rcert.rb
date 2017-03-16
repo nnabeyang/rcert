@@ -43,8 +43,13 @@ module Rcert
       @failures = []
       @successes = []
     end
+
+    def rcert_path
+      @path || File.expand_path((ARGV.size > 0 && File.exist?(ARGV[0]))? ARGV.shift : Rcert::DEFAULT_RCERT_FILE)
+    end
+
     def run(&block)
-      @path = File.expand_path(DEFAULT_RCERT_FILE)
+      @path = rcert_path 
       load @path if File.exist? @path 
       if ARGV.size > 0
         problems = @problems.select {|k, v| ARGV.include?(k.to_s) }
