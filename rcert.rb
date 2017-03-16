@@ -226,7 +226,7 @@ module Rcert
     def render
       template = [ 
       "<%= @desc %>\n",
-      "<%= @code_template %>",
+      "<%= @code_template %>\n",
       "---------\n",
       "<%= @answer.out %>",
       "---------\n",
