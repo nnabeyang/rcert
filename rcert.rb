@@ -126,7 +126,7 @@ module Rcert
         @context.class_eval(@code, name, 1)
         @out = s.string
       rescue Exception => e
-        @out = "<error>"
+        @out = "<error:#{e.inspect.split(':')[0][2..-1]}>\n" 
         raise e
       end
     ensure
